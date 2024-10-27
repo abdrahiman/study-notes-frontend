@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root.dark {
+  --premary: #a855f7;
+  --dGray100: #111;
+  --dGray200: #222;
+}
+:root.light {
+  --premary: #a855f7;
+  --wGray100: #f1f1f1;
+  --wGray200: #eee;
+}
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+} */
+
+/* body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+} */
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+html[lang="ar"]{
+  direction: rtl;
+}
+
+
+input:focus,textarea:focus,input:focus-visible,textarea:focus-visible,input:active {
+  outline:solid 1px rgb(142, 67, 217) !important;
+}
