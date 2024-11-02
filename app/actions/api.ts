@@ -1,7 +1,7 @@
+"use server";
 import axios, { type AxiosRequestConfig } from "axios";
+import { API_HOST } from "@/utils/types";
 // import toast from "react-hot-toast";
-
-export const API_HOST = "https://studynotes-ayoi.onrender.com";
 
 // let showError = (message: string) => {
 //   toast.error(message);
@@ -13,27 +13,11 @@ export const API_HOST = "https://studynotes-ayoi.onrender.com";
 // };
 
 export let update = async (slug: string, payload: any) => {
-  // toast.loading("loading", { id: "loading_update" });
-  // try {
-  // let isErr = false;
   let res = await axios.put(API_HOST + slug, payload).catch((err) => {
-    // isErr = true;
     return err;
   });
 
-  // if (isErr) {
-  // toast.remove("loading_update");
-  // return showError(res.response.data.message);
-  // }
-  // toast.remove("loading_update");
-
-  //display success toast
-  // showSucess("updated successfully");
   return res.data;
-  // } catch (err) {
-  //   toast.remove("loading_update");
-  //   return showError("error loading data");
-  // }
 };
 
 export let create = async (slug: string, payload: any) => {
@@ -86,6 +70,8 @@ export let remove = async (slug: string) => {
   // }
 };
 
-export let geter = (slug: string, config?: AxiosRequestConfig<any>) => {
-  return axios(API_HOST + slug, config).then((res:any) => res.data);
+export let getter = (slug: string, config?: AxiosRequestConfig<any>) => {
+  return axios(API_HOST + slug, config)
+    .then((res: any) => res.data)
+    .catch((err) => err);
 };

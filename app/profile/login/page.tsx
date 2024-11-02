@@ -1,9 +1,7 @@
-import { LoginAction } from "../actions/auth";
+import { cookies } from "next/headers";
+import { LoginAction } from "../../actions/auth";
 
 export default function Login({searchParams}:{searchParams?:{token:string}}){
-  if(searchParams?.token){
-    console.log({token:searchParams.token});
-  }
   return (
 <div className="w-full flex justify-center px-2 items-center min-h-screen">
   <form

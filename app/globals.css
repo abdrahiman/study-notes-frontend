@@ -1,3 +1,4 @@
+@import url("https://fonts.cdnfonts.com/css/sf-pro-display");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -31,11 +32,17 @@
     text-wrap: balance;
   }
 }
-html[lang="ar"]{
+html[lang="ar"] {
   direction: rtl;
 }
+body {
+  /* font-family: "SF Pro Display", sans-serif !important; */
+}
 
-
-input:focus,textarea:focus,input:focus-visible,textarea:focus-visible,input:active {
-  outline:solid 1px rgb(142, 67, 217) !important;
+input:focus,
+textarea:focus,
+input:focus-visible,
+textarea:focus-visible,
+input:active {
+  outline: solid 1px rgb(142, 67, 217);
 }

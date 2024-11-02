@@ -19,5 +19,3 @@ export const InputFilesToPDF = async (files: FormDataEntryValue[]) => {
   const pdf = await imagesToPDF(imageArrayBuffers);
   return pdf.dataUrl();
 };
-
-
