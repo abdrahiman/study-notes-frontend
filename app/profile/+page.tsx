@@ -13,7 +13,7 @@ export function Profile({user}:{user:IUser}) {
       title: "الموجات الديناميكية",
       description: "yo yo yo yo",
       grade: "تانية باك فيزياء",
-      subject: "الفيزياء والكيمياء",
+      subject: "philo",
       lesson: ["/test.jpg"],
       publisher: "0101",
       tags: ["bruh"],

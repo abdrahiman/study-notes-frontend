@@ -10,6 +10,7 @@ export const UrlsToPDF = async (imagesurls: string[]) => {
 };
 
 export const InputFilesToPDF = async (files: FormDataEntryValue[]) => {
+  if(!files) return null;
   const imageFiles = files.filter((file) => file instanceof File) as File[];
 
   // Convert files to ArrayBuffers

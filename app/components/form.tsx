@@ -3,7 +3,7 @@ import { CreateLesson, UpdateLesson } from "@/app/actions/lessons";
 import { ILesson } from "@/utils/types";
 import { useState } from "react";
 
-export const LessonForm= async ({lesson}:{lesson?:ILesson,})=>{
+export const LessonForm = ({lesson}:{lesson?:ILesson,})=>{
   let [errorMsg,setError]= useState("");
   let [isPDFMode,setMode]= useState(true);
   

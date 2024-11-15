@@ -4,7 +4,6 @@ import { LeftIcon } from "@/app/components/icons/left";
 import { RightIcon } from "@/app/components/icons/right";
 import { SaveIcon } from "@/app/components/icons/save";
 import { UrlsToPDF } from "@/utils/pdf";
-import Link from "next/link";
 import { useState } from "react";
 import { ILesson } from "@/utils/types";
 
@@ -28,12 +27,10 @@ export function Lesson({ lesson }: { lesson: ILesson }) {
   };
   return (
     <div className="w-full">
-      <Link className="back underline h-12" href="/" target="_top">
-        رجوع
-      </Link>
       <div className="mx-auto flex items-start gap-4 w-full max-md:flex-col-reverse">
         <div className="info max-w-sm w-full flex gap-4 flex-col">
           <h1 className="text-2xl font-bold capitalize">{lesson.title}</h1>
+          <p className="mb-4">لوريم غكل من تسايتب سااي اغثا باه غكل من تسايتب سااي اغثا تساينبم ككمنيسي تنسيتبعة</p>
           <div className="flex w-full gap-4">
             <span className="font-semibold">المستوى:</span>
             <span className="rounded-md bg-gray-100/30 py-[0.1rem] text-white px-2">
@@ -77,7 +74,7 @@ export function Lesson({ lesson }: { lesson: ILesson }) {
                 onClick={() =>
                   imgIndex + 1 < lesson.lesson.length
                     ? setImgIndex(imgIndex + 1)
-                    : false
+                    : setImgIndex(0)
                 }
               >
                 <LeftIcon />

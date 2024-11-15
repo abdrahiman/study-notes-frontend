@@ -12,7 +12,7 @@ export default function Page({ params }: { params: { id: string } }) {
     description: "yo yo yo yo",
     grade: "تانية باك فيزياء",
     subject: "الفيزياء والكيمياء",
-    lesson: ["/test.jpg", "/user.png"],
+    lesson: ["/test.jpg", "/user.png","/test.jpg",],
     publisher: { name: "sur" },
     tags: ["bruh"],
   };
