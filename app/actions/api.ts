@@ -24,7 +24,7 @@ export let create = async (slug: string, payload: any) => {
   // toast.loading("loading", { id: "loading_create" });
   // try {
   let isErr = false;
-  let res = await axios.post(API_HOST + slug, payload).catch((err) => {
+  let res = await axios.post(API_HOST +"/"+ slug, payload).catch((err) => {
     isErr = true;
     return err;
   });

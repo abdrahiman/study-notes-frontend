@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { LoginAction } from "../../actions/auth";
 
-export default function Login({searchParams}:{searchParams?:{token:string}}){
+export default function Login(){
   return (
 <div className="w-full flex justify-center px-2 items-center min-h-screen">
   <form

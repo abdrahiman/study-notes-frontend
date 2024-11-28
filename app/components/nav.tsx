@@ -29,7 +29,12 @@ export function Nav() {
   };
   return (
     <nav className="w-full max-w-6xl mx-auto py-8 px-2 flex justify-between items-center">
-      <Link href="/" className="name text-xl font-bold px-6 py-2 bg-white dark:bg-premary rounded-xl text-black">زبدة</Link>
+      <Link
+        href="/"
+        className="name text-xl font-bold px-6 py-2 bg-black dark:bg-premary rounded-xl text-white"
+      >
+        خلاصة
+      </Link>
       <div className="flex gap-2 items-center">
         <button onClick={changeTheme}>
           <ThemeIcon />

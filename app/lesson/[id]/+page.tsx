@@ -8,7 +8,7 @@ import { useState } from "react";
 import { ILesson } from "@/utils/types";
 
 export function Lesson({ lesson }: { lesson: ILesson }) {
-  let [ImageFull, setImageMode] = useState(false);
+  let [ImageFull, setImageMode] = useState(true);
   let [imgIndex, setImgIndex] = useState(0);
   let [isNav, setShowNav] = useState(false);
 
@@ -21,7 +21,7 @@ export function Lesson({ lesson }: { lesson: ILesson }) {
   };
   let downloadImg = () => {
     let a = document.createElement("a");
-    a.href = lesson.lesson[imgIndex];
+    a.href = lesson.images[imgIndex];
     a.download = lesson.title + imgIndex + 1;
     a.click();
   };
@@ -30,7 +30,9 @@ export function Lesson({ lesson }: { lesson: ILesson }) {
       <div className="mx-auto flex items-start gap-4 w-full max-md:flex-col-reverse">
         <div className="info max-w-sm w-full flex gap-4 flex-col">
           <h1 className="text-2xl font-bold capitalize">{lesson.title}</h1>
-          <p className="mb-4">لوريم غكل من تسايتب سااي اغثا باه غكل من تسايتب سااي اغثا تساينبم ككمنيسي تنسيتبعة</p>
+          <p className="mb-4">
+            {lesson.description}
+          </p>
           <div className="flex w-full gap-4">
             <span className="font-semibold">المستوى:</span>
             <span className="rounded-md bg-gray-100/30 py-[0.1rem] text-white px-2">
@@ -46,7 +48,7 @@ export function Lesson({ lesson }: { lesson: ILesson }) {
           <div className="flex w-full gap-4">
             <span className="font-semibold">السنة:</span>
             <span className="rounded-md bg-gray-100/30 py-[0.1rem] text-white px-2">
-              {new Date(Date.now()).getFullYear()}
+              {new Date(lesson.createdAt).getFullYear()}
             </span>
           </div>
           <div className="left flex gap-3 pt-2">
@@ -72,7 +74,7 @@ export function Lesson({ lesson }: { lesson: ILesson }) {
               <button
                 className="p-1 rounded-full h-fit bg-white bg-opacity-90"
                 onClick={() =>
-                  imgIndex + 1 < lesson.lesson.length
+                  imgIndex + 1 < lesson.images.length
                     ? setImgIndex(imgIndex + 1)
                     : setImgIndex(0)
                 }
@@ -86,7 +88,7 @@ export function Lesson({ lesson }: { lesson: ILesson }) {
                 <CloudDownloadIcon />
               </button>
               <div className="flex min-w-fit items-center gap-2 pr-2 text-white">
-                {imgIndex + 1 + " من " + lesson.lesson.length}
+                {imgIndex + 1 + " من " + lesson.images.length}
               </div>
 
               <button
@@ -100,11 +102,11 @@ export function Lesson({ lesson }: { lesson: ILesson }) {
             </div>
           )}
           <div
-            className="reader min-h-full w-full overflow-y-auto bg-gray-50 dark:bg-dGray200 border-2 border-[#333] rounded-xl flex items-center flex-col justify-start cursor-zoom-in"
+            className="reader min-h-full w-full overflow-y-auto bg-gray-50 dark:bg-dGray200 border-2 border-[#333] rounded-xl flex items-center flex-col justify-start cursor-zoom-in overflow-hidden"
             onClick={() => setImageMode(!ImageFull)}
           >
             <img
-              src={lesson.lesson[imgIndex]}
+              src={lesson.images[imgIndex]}
               alt={"title"}
               className={`w-full h-full relative ${
                 ImageFull

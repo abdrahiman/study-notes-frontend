@@ -1,32 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { MouseEventHandler, useState } from "react";
 import { Card } from "../components/card";
 import Link from "next/link";
 import { IUser } from "@/utils/types";
+import { update } from "../actions/api";
 
-export function Profile({user}:{user:IUser}) {
+export function Profile({ user }: { user: IUser }) {
   let [savedTab, setTab] = useState(true);
-  let lessons = [
-    {
-      _id: "00100",
-      title: "الموجات الديناميكية",
-      description: "yo yo yo yo",
-      grade: "تانية باك فيزياء",
-      subject: "philo",
-      lesson: ["/test.jpg"],
-      publisher: "0101",
-      tags: ["bruh"],
-    },
-  ];
+  let [editeMode, setEditeMode] = useState(false);
+  let [userName, setUserName] = useState(user?.name || "مجهول");
+  let EditeName = () => {
+    console.log("UPDAAAAAAAAAAAAAATE");
+    update("/users/id", { name: userName });
+    setEditeMode(!editeMode);
+  };
 
   return (
     <div className="flex flex-col gap-4">
       <div className="w-full flex flex-col items-center gap-4">
         <img className="rounded-full w-48 h-48 mx-auto" src={user.avatar} />
-        <h3 className="text-xl font-bold" dir="auto">
-          {user.name}
-        </h3>
+        <div>
+          <h3
+            className="text-xl font-bold"
+            dir="auto"
+            onChange={(e) => setUserName((e.target as any).textContent)}
+            contentEditable={user && editeMode}
+          >
+            {userName}
+          </h3>
+          <button onClick={EditeName}>{editeMode ? "Submit" : "Edite"}</button>
+        </div>
         <div className="tabs flex gap-6">
           <button
             onClick={() => setTab(true)}
@@ -48,13 +52,14 @@ export function Profile({user}:{user:IUser}) {
       </div>
       {savedTab ? (
         <main className="grid grid-cols-3 max-sm:grid-cols-1 max-md:grid-cols-2 gap-4 justify-start my-4">
-          {lessons&& lessons.map(l=>(
-            <Card lesson={l} />
-          ))}
+          {/* {lessons && lessons.map((l) => <Card lesson={l} />)} */}
         </main>
       ) : (
         <main className="grid grid-cols-3 max-sm:grid-cols-1 max-md:grid-cols-2 gap-4 justify-start my-4">
-          <Card lesson={lessons[0]} profileMode={lessons[0].publisher==user._id} />
+          {/* <Card
+            lesson={lessons[0]}
+            profileMode={lessons[0].publisher == user._id}
+          /> */}
           <Link
             href="/profile/create"
             className="flex flex-col h-80 rounded-xl bg-wGray100 dark:bg-dGray100 shadow-md items-center text-8xl justify-center gap-2 text-black"
