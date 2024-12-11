@@ -7,43 +7,44 @@ export const CreateLesson = async (formData: FormData) => {
   try {
     let payload: any = {
       title: formData.get("title"),
-      pdf: formData.get("pdf"),
-      images: formData.get("images"),
+      images: formData.getAll("images"),
       description: formData.get("description"),
       grade: formData.get("grade"),
       subject: formData.get("subject"),
       tags: formData.get("tags"),
     };
-    // //process data
-    // if (payload.tags) {
-    //   payload.tags = (payload.tags as string)
-    //     .trim()
-    //     .split(",")
-    //     .filter((s) => s != "");
-    // }
-    // if (payload.grade && payload.subject) {
-    //   payload.grade = payload.grade.toLowerCase();
-    //   payload.subject = payload.subject.toLowerCase();
-    // }
-    console.log(payload);
-    if (payload.images) {
-      //FILES TO PDF
-      payload.pdf = InputFilesToPDF(payload.images);
+    //process data
+    if (payload.tags) {
+      payload.tags = (payload.tags as string)
+        .trim()
+        .split(",")
+        .filter((s) => s != "");
     }
-    let fd = new FormData();
-    fd.set("file", payload.pdf);
-    let urls = await create("lessons/upload", fd);
-    delete payload.pdf;
-
-    payload.images = urls;
+    if (payload.grade && payload.subject) {
+      payload.grade = payload.grade.toLowerCase();
+      payload.subject = payload.subject.toLowerCase();
+    }
+    let imagesUrls =[];
+    if(payload.images){
+      for(let image of payload.images){
+        let fd = new FormData();
+        fd.set(file,image);
+        let res= await create("/lesson/upload",fd);
+        imagesUrls.push(res.url);
+        console.log(image);
+      }
+    }
+    payload.images= imagesUrls;
+    console.log(payload);
     // to backend
-    // let r = await create("/lessons", payload);
+    let r = await create("/lessons", payload);
     // console.log(r);
-  } catch (err) {
+  } catch (err:any) {
     console.log(err);
+    return {error:err.message}
   }
 };
-export const UpdateLesson = (formData: FormData) => {
+export const UpdateLesson = async(formData: FormData) => {
   try {
     let payload: any = {
       title: formData.get("title"),
@@ -65,7 +66,7 @@ export const UpdateLesson = (formData: FormData) => {
       payload.subject = payload.subject.toLowerCase();
     }
     console.log(payload, id);
-    update("/lessons/" + id, payload);
+    await update("/lessons/" + id, payload);
   } catch (err) {
     console.log(err);
   }

@@ -1,15 +1,17 @@
 @import url("https://fonts.cdnfonts.com/css/sf-pro-display");
+@import url("https://fonts.cdnfonts.com/css/interface-trial");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root.dark {
-  --premary: #a855f7;
+  --premary: #5955b3;
   --dGray100: #111;
   --dGray200: #222;
 }
 :root.light {
-  --premary: #a855f7;
+  --premary: #5955b3;
   --wGray100: #f1f1f1;
   --wGray200: #eee;
 }
@@ -25,35 +27,49 @@
   background-color: transparent;
 }
 
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-} */
-
-/* body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-} */
+body {
+  font-family: "InterFace Trial", sans-serif;
+  /* font-family: "SF Pro Display", sans-serif !important; */
+}
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
 }
+
 html[lang="ar"] {
   direction: rtl;
 }
-body {
-  /* font-family: "SF Pro Display", sans-serif !important; */
+
+.mark::before {
+  content: "";
+  z-index: -1;
+  width: calc(100% + 0.5rem);
+  height: 0.7rem;
+  background-color: yellow;
+  position: absolute;
+  left: -0.25rem;
+  bottom: 0.4rem;
+}
+.gallery {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-input:focus,
-textarea:focus,
-input:focus-visible,
-textarea:focus-visible,
-input:active {
-  outline: solid 1px transparent;
+.gallery__item {
+  width: 240px;
+  margin: 5px;
+}
+
+.gallery__item img {
+  max-width: 100%;
+  height: auto;
+}
+
+.inline-gallery-container {
+  width: 1000px;
+  height: 100px;
+  position: relative;
 }

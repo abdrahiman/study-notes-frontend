@@ -3,7 +3,7 @@ import "./globals.css";
 import { Nav } from "./components/nav";
 
 export const metadata: Metadata = {
-  title: "Create Next App",
+  title: "Kholasa: hz dars dyalk wsir fi halatk",
   description: "Kholasa | Study Smart Not Hard",
 };
 
@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" className="light">
-      <body className="bg-premary dark:bg-black text-white dark:text-white">
+      <body className="dark:bg-black text-black bg-wGray100 dark:text-white">
         <Nav />
         <main className="mt-4 max-w-6xl w-full px-2 mx-auto pb-6">
           {children}

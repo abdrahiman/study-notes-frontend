@@ -14,7 +14,7 @@ import { API_HOST } from "@/utils/types";
 
 export let update = async (slug: string, payload: any) => {
   let res = await axios.put(API_HOST + slug, payload).catch((err) => {
-    return err;
+    return err
   });
 
   return res.data;
@@ -24,7 +24,7 @@ export let create = async (slug: string, payload: any) => {
   // toast.loading("loading", { id: "loading_create" });
   // try {
   let isErr = false;
-  let res = await axios.post(API_HOST +"/"+ slug, payload).catch((err) => {
+  let res = await axios.post(API_HOST + "/" + slug, payload).catch((err) => {
     isErr = true;
     return err;
   });
@@ -70,7 +70,7 @@ export let remove = async (slug: string) => {
   // }
 };
 
-export let getter = (slug: string, config?: AxiosRequestConfig<any>) => {
+export let getter = async (slug: string, config?: AxiosRequestConfig<any>) => {
   return axios(API_HOST + slug, config)
     .then((res: any) => res.data)
     .catch((err) => err);

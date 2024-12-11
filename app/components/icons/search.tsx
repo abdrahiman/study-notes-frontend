@@ -1,4 +1,4 @@
-export function LeftIcon() {
+export const SearchIcon = ({ classNames = "" }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -8,12 +8,12 @@ export function LeftIcon() {
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
-      stroke-linecap="round"
+      strokeLinecap="round"
       strokeLinejoin="round"
-      className="lucide lucide-arrow-right"
+      className={"lucide lucide-search " + classNames}
     >
-      <path d="M5 12h14" />
-      <path d="m12 5 7 7-7 7" />
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
     </svg>
   );
-}
+};

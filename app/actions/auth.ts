@@ -14,7 +14,7 @@ export let LoginAction = async (formData: FormData) => {
     let token = null;
     if (data.access_token) {
       token = data.access_token; 
-      cookies().set("access_token", token);
+      (await cookies()).set("access_token", token);
       return {state:{message:"logged in"}};
     }
   } catch (err: any) {

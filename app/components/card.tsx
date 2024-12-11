@@ -3,6 +3,9 @@ import { ILesson, SubjectsArColor } from "@/utils/types";
 import Link from "next/link";
 import { useState } from "react";
 import { remove } from "../actions/api";
+import { SaveIcon } from "./icons/save";
+import { EditeIcon } from "./icons/edite";
+import { DeleteIcon } from "./icons/delete";
 
 export function Card({
   lesson,
@@ -41,7 +44,7 @@ export function Card({
           </div>
         </div>
       )}
-      <div className="card flex flex-col h-96 rounded-xl bg-white dark:bg-dGray100 shadow-md text-black dark:text-white border-dGray100 border-2 overflow-hidden">
+      <div className="card flex flex-col h-96 rounded-xl bg-white dark:bg-dGray100 shadow-sm dark:text-white border-slate-100 border-2 overflow-hidden">
         <div className="image bg-gray-700 max-h-96 h-full overflow-hidden">
           <Link href={"/lesson/" + lesson._id}>
             <img
@@ -64,7 +67,7 @@ export function Card({
             >
               {s?.arabic || ""}
             </div>
-            <p className="text-gray-600">{lesson.grade}</p>
+            <p className="text-gray-600 text-sm">{lesson.grade}</p>
           </div>
           {profileMode ? (
             <>
@@ -72,21 +75,21 @@ export function Card({
                 className="absolute left-3 top-3 bg-red-500 p-1"
                 onClick={() => setDelMode(true)}
               >
-                D
+                <DeleteIcon />
               </button>
               <Link
                 href={"/lesson/" + lesson._id + "/update"}
                 className="absolute left-10 top-3 bg-blue-500 p-1"
               >
-                U
+                <EditeIcon />
               </Link>
             </>
           ) : (
             <button
-              className="absolute left-3 top-3 bg-red-500 p-1"
+              className={"absolute left-3 top-3 bg-slate-200 rounded-md p-2"}
               onClick={() => setDelMode(true)}
             >
-              Save
+              <SaveIcon classNames="size-4" />
             </button>
           )}
         </div>
