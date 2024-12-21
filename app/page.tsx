@@ -14,21 +14,22 @@ export default async function Page(props: { searchParams: Promise<any> }) {
     if (!q) q += "?";
     else q += "&";
     q += a + "=" + b;
-  }
-  // let lessons:ILesson[] = (await getter("/lessons"+q)).lessons;
-  let lessons: ILesson[] = [
-    {
-      title: "درس الكائنات الذرية",
-      _id: "776",
-      description: "هي مجموع من بلا بلا بلا بلا بلا",
-      createdAt: new Date(),
-      grade: "الجامعة",
-      images: ["/test.jpg"],
-      publisher: "d",
-      subject: "math",
-      tags: ["سقوط"],
-    },
-  ];
+  };
+  let lessons:ILesson[] = (await getter("/lessons"+q)).lessons;
+  console.log(lessons);
+  //let lessons: ILesson[] = [
+    //{
+      //title: "درس الكائنات الذرية",
+  //    _id: "776",
+    //  description: "هي مجموع من بلا بلا بلا بلا بلا",
+      //createdAt: new Date(),
+    //  grade: "الجامعة",
+    //  images: ["/test.jpg"],
+    //  publisher: "d",
+    //  subject: "math",
+    //  tags: ["سقوط"],
+    //},
+  //];
 
   return <Main lessons={lessons} q={searchParams} />;
 }

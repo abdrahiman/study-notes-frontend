@@ -1,7 +1,5 @@
 "use client";
 import { CloudDownloadIcon } from "@/app/components/icons/download";
-import { LeftIcon } from "@/app/components/icons/left";
-import { RightIcon } from "@/app/components/icons/right";
 import { SaveIcon } from "@/app/components/icons/save";
 import { UrlsToPDF } from "@/utils/pdf";
 import { useState } from "react";
@@ -9,9 +7,7 @@ import { ILesson } from "@/utils/types";
 import { Preview } from "@/app/components/preview";
 
 export function Lesson({ lesson }: { lesson: ILesson }) {
-  let [ImageFull, setImageMode] = useState(true);
   let [imgIndex, setImgIndex] = useState(0);
-  let [isNav, setShowNav] = useState(false);
 
   let downloadPdf = async () => {
     let pdfUrl = await UrlsToPDF(["/test.jpg", "/user.png"]);
@@ -63,13 +59,8 @@ export function Lesson({ lesson }: { lesson: ILesson }) {
             </button>
           </div>
         </div>
-        <aside
-          className="pdf flex flex-col gap-2 w-full items-center rounded-xl relative max-w-5xl max-h-[calc(100vh-10rem)] max-md:max-h-[calc(100vh-20rem)] overflow-hidden h-[calc(100vh-10rem)]"
-          onMouseOver={() => setShowNav(true)}
-          onMouseLeave={() => setShowNav(false)}
-        >
-        <Preview images={lesson.images} />
-
+        <aside className="pdf flex flex-col gap-2 w-full items-center relative max-w-5xl max-h-[calc(100vh-10rem)] max-md:max-h-[calc(100vh-20rem)] overflow-hidden h-[calc(100vh-10rem)] rounded-lg">
+          <Preview images={lesson.images} />
         </aside>
       </div>
       <h3 className="text-center font-bold text-3xl mt-12 mb-2">

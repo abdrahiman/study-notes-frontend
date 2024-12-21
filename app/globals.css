@@ -52,24 +52,16 @@ html[lang="ar"] {
   left: -0.25rem;
   bottom: 0.4rem;
 }
-.gallery {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
+.hero-image > div {
+  background-size: contain;
+  background-position: bottom;
+  background-repeat: no-repeat;
+  background-image: url("/hero.png");
 }
 
-.gallery__item {
-  width: 240px;
-  margin: 5px;
-}
-
-.gallery__item img {
-  max-width: 100%;
-  height: auto;
-}
-
-.inline-gallery-container {
-  width: 1000px;
-  height: 100px;
-  position: relative;
+@media (max-width: 768px) {
+  .hero-image > div {
+    background-image: url("/hero-mobile.png");
+  }
 }

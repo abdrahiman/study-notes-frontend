@@ -1,5 +1,4 @@
-export const API_HOST =
-  "https://5000-idx-raaajel-1722765041064.cluster-23wp6v3w4jhzmwncf7crloq3kw.cloudworkstations.dev";
+export const API_HOST = "https://kholasa.onrender.com";
 
 export interface ILesson {
   _id: string;

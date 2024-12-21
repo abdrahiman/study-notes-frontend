@@ -11,27 +11,30 @@ export function Main({ lessons, q }: { lessons: ILesson[]; q?: any }) {
   return (
     <div className="w-full flex flex-col">
       <header className="w-full min-h-screen flex items-center justify-start flex-col gap-2">
-        <div className="hero-image absolute left-0 top-0 w-full h-screen -z-10">
-          <img src="/hero.png" className="w-full object-cover h-full" alt="" />
+        <div className="hero-image absolute top-0 md:bottom-8 w-full md:max-w-6xl mx-auto h-screen md:h-screen -z-10">
+          <div className="w-full h-full"></div>
         </div>
-        <h1 className="font-bold mt-32 max-md:text-2xl text-4xl text-center">
+        <h1 className="font-bold mt-12 md:mt-32 max-md:text-2xl text-4xl text-center">
           ملخصات <span className="mark relative">تعتقك</span> من ساعات ديال
           المراجعة
         </h1>
         <p className="mt-4 text-slate-600 text-center max-md:text-sm">
-          مجموعة من التلاخيص المختارة بعناية باش تعاونك تفوق وتجيب نقاط 💯
+          مجموعة من التلاخيص المختارة بعناية باش تعاونك تفوق وتجيب النقاط 💯
         </p>
         <Link href="#browse">
-        <button className="px-4 py-2 rounded-lg text-white mt-4 bg-black">تصفح الملخصات</button>
+          <button className="px-4 py-2 rounded-lg text-white mt-4 bg-black">
+            تصفح الملخصات
+          </button>
         </Link>
       </header>
-      <div className="flex justify-between items-center">
+      <div
+        id="browse"
+        className="flex justify-between items-center flex-wrap w-full pt-4"
+      >
         <h2 className="text-3xl mb-4 font-bold">تصفح الملخصات</h2>
-
         <form
-          className="search max-w-2xl w-full flex justify-start items-start flex-wrap gap-2"
+          className="search min-w-fit flex justify-start items-start flex-wrap gap-2"
           method="GET"
-          id="browse"
         >
           <div className="flex gap-1 max-sm:w-full">
             <input
@@ -70,7 +73,7 @@ export function Main({ lessons, q }: { lessons: ILesson[]; q?: any }) {
                 <option value="frencais">الفرنسية</option>
               </select>
             </div>
-            <button className="rounded-lg text-sm dark:bg-purple-500 bg-premary px-6 text-white py-2 min-w-fit flex gap-1 items-center">
+            <button className="rounded-lg text-sm dark:bg-purple-500 bg-black px-6 text-white py-2 flex gap-1 items-center">
               بحث
               <SearchIcon classNames="size-4" />
             </button>

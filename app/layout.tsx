@@ -7,11 +7,15 @@ export const metadata: Metadata = {
   description: "Kholasa | Study Smart Not Hard",
 };
 
+const https = require('https');
+
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
   return (
     <html lang="ar" className="light">
       <body className="dark:bg-black text-black bg-wGray100 dark:text-white">

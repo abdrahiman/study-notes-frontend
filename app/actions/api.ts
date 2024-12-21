@@ -1,16 +1,18 @@
 "use server";
 import axios, { type AxiosRequestConfig } from "axios";
 import { API_HOST } from "@/utils/types";
-// import toast from "react-hot-toast";
+const https = require('https');
 
-// let showError = (message: string) => {
-//   toast.error(message);
-//   return new Error(message);
-// };
-
-// let showSucess = (message: string) => {
-//   toast.success(message);
-// };
+const instance = axios.create({
+  proxy: {
+    host: '192.168.49.1',
+    port: 8080,
+    protocol: 'http'
+  },
+  httpsAgent: new https.Agent({
+    rejectUnauthorized: false // Only for development
+  })
+});
 
 export let update = async (slug: string, payload: any) => {
   let res = await axios.put(API_HOST + slug, payload).catch((err) => {
@@ -71,7 +73,10 @@ export let remove = async (slug: string) => {
 };
 
 export let getter = async (slug: string, config?: AxiosRequestConfig<any>) => {
-  return axios(API_HOST + slug, config)
+  return instance.get(API_HOST + slug, config)
     .then((res: any) => res.data)
-    .catch((err) => err);
+    .catch((err:any) => {
+      console.log(err.message);
+      return err;
+    });
 };

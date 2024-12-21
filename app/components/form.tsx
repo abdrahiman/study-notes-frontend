@@ -1,6 +1,7 @@
 "use client";
 import { CreateLesson, UpdateLesson } from "@/app/actions/lessons";
 import { ILesson } from "@/utils/types";
+import { InputFilesToPDF } from "@/utils/pdf";
 import { useState } from "react";
 
 export const LessonForm = ({ lesson }: { lesson?: ILesson }) => {
@@ -31,6 +32,12 @@ export const LessonForm = ({ lesson }: { lesson?: ILesson }) => {
   //     </div>
   //   </div>
   // ) : (
+  let upload=async(e:any)=>{
+    let imgs = e.target.files;
+    console.log(imgs);
+    let pdf= await InputFilesToPDF(imgs);
+    console.log(pdf);
+  }
   return (
     <form
       className="rounded-xl items-center max-w-sm w-full flex flex-col gap-4 h-fit text-black"
@@ -54,6 +61,7 @@ export const LessonForm = ({ lesson }: { lesson?: ILesson }) => {
             type="file"
             name="images"
             multiple
+            onChange={(e)=>upload(e)}
             accept=".png,.jpg,.jpeg"
             className="absolute left-0 top-0 opacity-0 w-full h-full z-10"
           />
