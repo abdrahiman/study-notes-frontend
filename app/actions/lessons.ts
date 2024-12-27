@@ -24,27 +24,26 @@ export const CreateLesson = async (formData: FormData) => {
       payload.grade = payload.grade.toLowerCase();
       payload.subject = payload.subject.toLowerCase();
     }
-    let imagesUrls =[];
-    if(payload.images){
-      for(let image of payload.images){
+    let imagesUrls = [];
+    if (payload.images) {
+      for (let image of payload.images) {
         let fd = new FormData();
-        fd.set(file,image);
-        let res= await create("/lesson/upload",fd);
+        fd.set("file", image);
+        let res = await create("/lesson/upload", fd);
         imagesUrls.push(res.url);
         console.log(image);
       }
     }
-    payload.images= imagesUrls;
+    payload.images = imagesUrls;
     console.log(payload);
     // to backend
     let r = await create("/lessons", payload);
     // console.log(r);
-  } catch (err:any) {
+  } catch (err: any) {
     console.log(err);
-    return {error:err.message}
   }
 };
-export const UpdateLesson = async(formData: FormData) => {
+export const UpdateLesson = async (formData: FormData) => {
   try {
     let payload: any = {
       title: formData.get("title"),

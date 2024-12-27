@@ -15,12 +15,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  
+  let noNavPages = false;
+  let fullWidthPages = false;
   return (
     <html lang="ar" className="light">
       <body className="dark:bg-black text-black bg-wGray100 dark:text-white">
-        <Nav />
-        <main className="mt-4 max-w-6xl w-full px-2 mx-auto pb-6">
+        {!noNavPages&& <Nav />}
+        <main className={`w-full px-2 pb-6 ${fullWidthPages?"":"mt-4 max-w-6xl mx-auto"}`}>
           {children}
         </main>
       </body>
