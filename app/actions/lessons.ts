@@ -1,72 +1,64 @@
 "use server";
 
-import { InputFilesToPDF } from "@/utils/pdf";
-import { create, update } from "./api";
+import { API_HOST } from "@/utils/types";
+import axios from "axios";
+import { File } from "megajs";
 
-export const CreateLesson = async (formData: FormData) => {
+export const createLesson = async (formData: FormData) => {
   try {
-    let payload: any = {
+    const payload = {
       title: formData.get("title"),
       images: formData.getAll("images"),
       description: formData.get("description"),
-      grade: formData.get("grade"),
-      subject: formData.get("subject"),
-      tags: formData.get("tags"),
+      grade: formData.get("grade")?.toString().toLowerCase(),
+      subject: formData.get("subject")?.toString().toLowerCase(),
+      tags: formData.get("tags")?.toString().trim().split(",").filter(Boolean),
     };
-    //process data
-    if (payload.tags) {
-      payload.tags = (payload.tags as string)
-        .trim()
-        .split(",")
-        .filter((s) => s != "");
-    }
-    if (payload.grade && payload.subject) {
-      payload.grade = payload.grade.toLowerCase();
-      payload.subject = payload.subject.toLowerCase();
-    }
-    let imagesUrls = [];
-    if (payload.images) {
-      for (let image of payload.images) {
-        let fd = new FormData();
-        fd.set("file", image);
-        let res = await create("/lesson/upload", fd);
-        imagesUrls.push(res.url);
-        console.log(image);
-      }
-    }
-    payload.images = imagesUrls;
     console.log(payload);
-    // to backend
-    let r = await create("/lessons", payload);
-    // console.log(r);
-  } catch (err: any) {
-    console.log(err);
+
+    await create("/lessons", payload);
+  } catch (err) {
+    console.error(err);
   }
 };
-export const UpdateLesson = async (formData: FormData) => {
+
+export const updateLesson = async (formData: FormData) => {
   try {
-    let payload: any = {
+    const payload = {
       title: formData.get("title"),
       description: formData.get("description"),
-      grade: formData.get("grade"),
-      subject: formData.get("subject"),
-      tags: formData.get("tags"),
+      grade: formData.get("grade")?.toString().toLowerCase(),
+      subject: formData.get("subject")?.toString().toLowerCase(),
+      tags: formData.get("tags")?.toString().trim().split(",").filter(Boolean),
     };
-    let id = formData.get("id");
-    //process data
-    if (payload.tags) {
-      payload.tags = (payload.tags as string)
-        .trim()
-        .split(",")
-        .filter((s) => s != "");
-    }
-    if (payload.grade && payload.subject) {
-      payload.grade = payload.grade.toLowerCase();
-      payload.subject = payload.subject.toLowerCase();
-    }
+
+    const id = formData.get("id");
     console.log(payload, id);
-    await update("/lessons/" + id, payload);
+
+    await axios.put(`${API_HOST}/api/lessons/${id}`, payload);
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
+};
+
+export const uploadImage = async (file: File) => {
+  const data = new FormData();
+  data.append("file", file as any);
+  data.append("upload_preset", "ilmamcdn");
+
+  const res = await fetch(
+    "https://api.cloudinary.com/v1_1/dgvxswr30/image/upload",
+    {
+      method: "POST",
+      body: data,
+    }
+  );
+
+  const fileUploaded = await res.json();
+  return fileUploaded.secure_url;
+};
+
+export const getPdfFromLink = (link: string) => {
+  const pdf = File.fromURL(link);
+  return pdf.downloadBuffer({});
 };

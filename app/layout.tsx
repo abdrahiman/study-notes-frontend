@@ -7,9 +7,6 @@ export const metadata: Metadata = {
   description: "Kholasa | Study Smart Not Hard",
 };
 
-const https = require('https');
-
-
 export default function RootLayout({
   children,
 }: Readonly<{

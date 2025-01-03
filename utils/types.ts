@@ -8,6 +8,7 @@ export interface ILesson {
   grade: string;
   publisher: {};
   tags: string[];
+  isPrivate: boolean;
   images: string[];
   createdAt: Date;
 }

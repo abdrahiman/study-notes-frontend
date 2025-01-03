@@ -1,44 +1,38 @@
-import { NextRequest } from "next/server";
-import axios from "axios";
-const apiKey = process.env.PDF_SECRET;
-const apiUrl = `https://api.iloveimg.com/v1/pdfjpg`;
+import { Storage } from "megajs";
+import { NextRequest, NextResponse } from "next/server";
+import { v4 as uuidv4 } from "uuid";
 
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    console.log(apiKey);
-    const formData = await req.formData();
-    const pdfFile = formData.get("pdfFile") as File;
+    const formData = await request.formData();
+    const file = formData.get("pdfFile") as File;
 
-    const formDataToSend = new FormData();
-    formDataToSend.append("file", pdfFile);
+    if (!file || file.type != "application/pdf") {
+      return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
+    }
 
-    let res = await axios.post(apiUrl, formDataToSend, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${apiKey}`,
-      },
-    });
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-    const images = res.data.images;
-    return new Response(
-      JSON.stringify({
-        message: "Conversion successful",
-        images: images,
-      })
-    );
-    return new Response(
-      JSON.stringify({
-        message: "Conversion successful",
-      })
-    );
-  } catch (error: any) {
-    console.error("Conversion error:", error);
-    return new Response(
-      JSON.stringify({ message: "Conversion failed", error: error.message }),
+    const storage = await new Storage({
+      email: process.env.MEGA_EMAIL!,
+      password: process.env.MEGA_PASSWORD!,
+    }).ready;
+
+    const uploadedFile = await storage.upload(
       {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+        name: `${file.name || "unknown"}-${uuidv4()}.pdf`,
+      },
+      buffer
+    ).complete;
+    const link = await uploadedFile.link(false);
+
+    return NextResponse.json({
+      message: "Upload successful",
+      link: link,
+      fileName: uploadedFile.name,
+    });
+  } catch (error) {
+    console.error("Upload error:", error);
+    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 }

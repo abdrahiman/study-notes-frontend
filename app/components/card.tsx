@@ -1,11 +1,9 @@
 "use client";
 import { ILesson, SubjectsArColor } from "@/utils/types";
+import axios from "axios";
+import { DeleteIcon, Edit, Save } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { remove } from "../actions/api";
-import { SaveIcon } from "./icons/save";
-import { EditeIcon } from "./icons/edite";
-import { DeleteIcon } from "./icons/delete";
 
 export function Card({
   lesson,
@@ -29,8 +27,8 @@ export function Card({
             </h2>
             <button
               className="rounded-md px-10 mx-auto py-2 bg-red-500"
-              onClick={() => {
-                remove("/lessons/" + lesson._id);
+              onClick={async () => {
+                await axios.delete("/lessons/" + lesson._id);
               }}
             >
               حذف
@@ -81,7 +79,7 @@ export function Card({
                 href={"/lesson/" + lesson._id + "/update"}
                 className="absolute left-10 top-3 bg-blue-500 p-1"
               >
-                <EditeIcon />
+                <Edit />
               </Link>
             </>
           ) : (
@@ -89,7 +87,7 @@ export function Card({
               className={"absolute left-3 top-3 bg-slate-200 rounded-md p-2"}
               onClick={() => setDelMode(true)}
             >
-              <SaveIcon classNames="size-4" />
+              <Save className="size-4" />
             </button>
           )}
         </div>

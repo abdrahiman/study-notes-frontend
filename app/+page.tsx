@@ -3,12 +3,12 @@ import { ILesson } from "@/utils/types";
 import { Card } from "./components/card";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { SearchIcon } from "./components/icons/search";
+import { Search } from "lucide-react";
 
 export function Main({ lessons, q }: { lessons: ILesson[]; q?: any }) {
   let r = useRouter();
   let s = useSearchParams();
-  
+
   return (
     <div className="w-full flex flex-col">
       <header className="w-full min-h-screen flex items-center justify-start flex-col gap-2">
@@ -23,7 +23,7 @@ export function Main({ lessons, q }: { lessons: ILesson[]; q?: any }) {
           مجموعة من التلاخيص المختارة بعناية باش تعاونك تفوق وتجيب النقاط 💯
         </p>
         <Link href="#browse">
-          <button onClick={()=>renderPage()} className="px-4 py-2 rounded-lg text-white mt-4 bg-black">
+          <button className="px-4 py-2 rounded-lg text-white mt-4 bg-black">
             تصفح الملخصات
           </button>
         </Link>
@@ -74,9 +74,9 @@ export function Main({ lessons, q }: { lessons: ILesson[]; q?: any }) {
                 <option value="frencais">الفرنسية</option>
               </select>
             </div>
-            <button  className="rounded-lg text-sm dark:bg-purple-500 bg-black px-6 text-white py-2 flex gap-1 items-center">
+            <button className="rounded-lg text-sm dark:bg-purple-500 bg-black px-6 text-white py-2 flex gap-1 items-center">
               بحث
-              <SearchIcon classNames="size-4" />
+              <Search className="size-4" />
             </button>
           </div>
         </form>

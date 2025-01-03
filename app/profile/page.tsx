@@ -12,7 +12,6 @@ export default async function Page() {
     verified: false,
     role: "Admin",
   };
-  
 
   return <Profile user={user} />;
 }

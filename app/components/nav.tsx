@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { CloudDownloadIcon } from "./icons/download";
-import { ThemeIcon } from "./icons/theme";
 
 export function Nav() {
   let [themeDark, setTheme] = useState(false);
@@ -27,7 +25,6 @@ export function Nav() {
       setTheme(true);
     }
   };
-  let isLogged = Math.round(Math.random()*10)<=5;
   return (
     <nav className="w-full max-w-6xl mx-auto py-8 px-2 flex justify-between items-center">
       <Link
@@ -37,12 +34,15 @@ export function Nav() {
         💯 خلاصة
       </Link>
       <div className="flex gap-2 items-center">
-      <Link href={isLogged?"/profile/create":"/profile/login"}>
-        <button className="bg-premary px-3 py-1 rounded-md text-white">
-        {isLogged? "نشر":"تسجيل الدخول"}
-        </button>
-      </Link>
-        <Link href={isLogged?"/profile":"/profile/login"} className="flex gap-2 items-center">
+        <Link href={false ? "/profile/create" : "/profile/login"}>
+          <button className="bg-premary px-3 py-1 rounded-md text-white">
+            {false ? "نشر" : "تسجيل الدخول"}
+          </button>
+        </Link>
+        <Link
+          href={false ? "/profile" : "/profile/login"}
+          className="flex gap-2 items-center"
+        >
           <img src="/user.png" alt="" className="w-8 h-8 rounded-full" />
         </Link>
       </div>

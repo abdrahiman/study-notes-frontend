@@ -1,391 +1,280 @@
 "use client";
-import { CreateLesson, UpdateLesson } from "@/app/actions/lessons";
-import { ILesson } from "@/utils/types";
-import { InputFilesToPDF } from "@/utils/pdf";
-import { useState } from "react";
-import { create } from "../actions/api";
+import React, { useState } from "react";
 import axios from "axios";
+import { ILesson } from "@/utils/types";
+import { getPdfFromLink } from "../actions/lessons";
 
-export const LessonForm = ({ lesson }: { lesson?: ILesson }) => {
-  let [errorMsg, setError] = useState("");
-  let [isPDFMode, setMode] = useState(true);
+const LessonForm = ({ lesson }: { lesson: ILesson }) => {
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    fileUrl:
+      "https://mega.nz/file/yBMARIgT#Bls-zCsqfssMR2PfEihzD5ax5FRZNuiSF1l9Mp2vp8E",
+    title: lesson?.title || "",
+    description: lesson?.description || "",
+    grade: lesson?.grade || "7eme",
+    subject: lesson?.subject || "math",
+    tags: lesson?.tags?.join(", ") || "",
+  });
+  const [error, setError] = useState("");
+  const [fileName, setFileName] = useState("");
 
-  // let upload = async (e: any) => {
-  //   let pdf = e.target.files[0];
-  //   console.log(pdf);
-  //   let fd = new FormData();
-  //   fd.append("file", pdf);
-  //   let res = await axios.post("/api/upload", fd);
-  //   console.log(res);
-  // };
+  const handleFileChange = async (e: any) => {
+    try {
+      const file = e.target.files[0];
+      if (file) {
+        if (file.type != "application/pdf") {
+          setError("Please upload a PDF file");
+          return;
+        }
+        let fd = new FormData();
+        fd.append("pdfFile", file);
+        setFileName("Loading...");
+        let res = await axios.post("/api/upload", fd);
+        setFormData({ ...formData, fileUrl: res.data.link });
+        console.log(res);
+        setFileName(file.name);
+        setError("");
+      }
+    } catch (er) {
+      console.log(er);
+      setError("Error while uploading this pdf");
+    }
+  };
+
+  const handleNext = () => {
+    if (step === 1 && !formData.fileUrl) {
+      setError("Please upload a file first");
+      return;
+    }
+    if (step === 2 && (!formData.title || !formData.description)) {
+      setError("Please fill in all required fields");
+      return;
+    }
+    setError("");
+    setStep(step + 1);
+  };
+
+  const handleBack = () => setStep(step - 1);
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    if (!formData.tags) {
+      setError("Please add at least one tag");
+      return;
+    }
+    try {
+      console.log({
+        ...formData,
+        tags: formData.tags.split(",").map((tag) => tag.trim()),
+      });
+      console.log({ PDF: await getPdfFromLink(formData.fileUrl) });
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  const renderStepIndicator = () => {
+    const steps = ["رفع الملف", "المعلومات", "التفاصيل"];
+    return (
+      <div className="flex justify-between items-center mb-6">
+        {steps.map((label, i) => (
+          <div key={i} className="flex items-center">
+            <div
+              className={`
+              flex items-center justify-center w-8 h-8 rounded-full
+              ${
+                i + 1 === step
+                  ? "bg-purple-100 text-purple-600"
+                  : i + 1 < step
+                  ? "bg-purple-600 text-white"
+                  : "bg-gray-100 text-gray-400"
+              }
+            `}
+            >
+              {i + 1}
+            </div>
+            <span className="text-xs mr-1">{label}</span>
+            {i < steps.length - 1 && (
+              <div
+                className={`h-0.5 w-12 mx-2 ${
+                  i + 1 < step ? "bg-purple-600" : "bg-gray-200"
+                }`}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderStep = () => {
+    switch (step) {
+      case 1:
+        return (
+          <div className="space-y-4">
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-purple-500 transition-colors">
+              <div className="mb-4">
+                <svg
+                  className="mx-auto h-12 w-12 text-gray-400"
+                  stroke="currentColor"
+                  fill="none"
+                  viewBox="0 0 48 48"
+                >
+                  <path
+                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+              <p className="text-sm text-gray-600 mb-2">رفع ملف pdf</p>
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={handleFileChange}
+                className="hidden"
+                id="file-upload"
+              />
+              <label
+                htmlFor="file-upload"
+                className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg cursor-pointer hover:bg-purple-700 transition-colors"
+              >
+                اختيار ملف
+              </label>
+              {fileName && (
+                <p className="mt-2 text-sm text-gray-600">{fileName}</p>
+              )}
+            </div>
+          </div>
+        );
+      case 2:
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">العنوان</label>
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+                placeholder="Enter lesson title"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">الوصف</label>
+              <textarea
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+                placeholder="Enter lesson description"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 min-h-[100px]"
+              />
+            </div>
+          </div>
+        );
+      case 3:
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">المستوى</label>
+              <select
+                value={formData.grade}
+                onChange={(e) =>
+                  setFormData({ ...formData, grade: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <option value="7eme">7eme</option>
+                <option value="8eme">8eme</option>
+                <option value="9eme">9eme</option>
+                <option value="tcs">TCS</option>
+                <option value="tcl">TCL</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">المادة</label>
+              <select
+                value={formData.subject}
+                onChange={(e) =>
+                  setFormData({ ...formData, subject: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <option value="math">Mathematics</option>
+                <option value="phisic">Physics</option>
+                <option value="arabic">Arabic</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                كلمات المفتاحية (منفصلين بفاصلة)
+              </label>
+              <input
+                type="text"
+                value={formData.tags}
+                onChange={(e) =>
+                  setFormData({ ...formData, tags: e.target.value })
+                }
+                placeholder="e.g., algebra, equations, basics"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+          </div>
+        );
+    }
+  };
+
   return (
-    <form
-      className="rounded-xl items-center max-w-sm w-full flex flex-col gap-4 h-fit text-black"
-      // action={lesson ? UpdateLesson : CreateLesson}
-      method="post"
-      encType="multipart/form-data"
-      action={"/api/upload"}
-    >
-      {errorMsg && (
-        <p
-          dir="auto"
-          className="error w-full bg-red-800/40 border border-red-600 px-2 py-2 rounded-lg"
-        >
-          {errorMsg || ""}
-        </p>
-      )}
-      <input type="hidden" value={lesson?._id} name="id" />
+    <div className="w-full max-w-md mx-auto bg-white rounded-xl shadow-lg p-6">
+      <h2 className="text-2xl font-bold text-center mb-6">
+        {lesson ? "انشاء درس" : "تعديل"}
+      </h2>
 
-      <div className="flex flex-col w-full h-fit ">
-        <label className="">الملفات</label>
-        <div className="px-10 py-2 text-center rounded-xl bg-slate-200 border-premary border-2 relative">
-          ارفع الصور
-          <input
-            type="file"
-            name="pdfFile"
-            // accept=".png,.jpg,.jpeg"
-            accept=".pdf"
-            className="absolute left-0 top-0 opacity-0 w-full h-full z-10"
-          />
+      {renderStepIndicator()}
+
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          {error}
         </div>
-      </div>
-      <div className="flex flex-col w-full">
-        <label className="mb-2">العنوان</label>
-        <input
-          type="text"
-          id=""
-          defaultValue={lesson?.title || ""}
-          className="max-w-sm py-2 px-2 bg-white rounded-lg dark:bg-dGray200"
-          name="title"
-        />
-      </div>
-      <div className="flex flex-col w-full">
-        <label className="mb-2">الوصف</label>
-        <textarea
-          id=""
-          defaultValue={lesson?.description || ""}
-          className="max-w-sm py-2 px-2  bg-white rounded-lg dark:bg-dGray200 outline-purple-600"
-          name="description"
-        />
-      </div>
-      <div className="flex flex-col w-full">
-        <label className="mb-2">المستوى</label>
-        <select
-          name="grade"
-          id=""
-          defaultValue={lesson?.grade || ""}
-          className="py-2 bg-white rounded-lg dark:bg-dGray200 outline-purple-600 px-2"
-        >
-          <option value="7eme">7eme</option>
-          <option value="8eme">8eme</option>
-          <option value="9eme">9eme</option>
-          <option value="tcs">TCS</option>
-          <option value="tcl">TCL</option>
-        </select>
-      </div>
-      <div className="flex flex-col w-full">
-        <label className="mb-2">المادة</label>
-        <select
-          name="subject"
-          defaultValue={lesson?.subject || ""}
-          id=""
-          className="py-2 bg-white rounded-lg dark:bg-dGray200 outline-purple-600 px-2"
-        >
-          <option value="math">math</option>
-          <option value="phisic">phisic</option>
-          <option value="arabic">arabic</option>
-        </select>
-      </div>
-      <div className="flex flex-col w-full">
-        <label className="mb-2">الكلمات المفتاحية(منفصلة ب,)</label>
-        <input
-          type="text"
-          required
-          id=""
-          className="max-w-sm py-2 px-2 bg-white rounded-lg dark:bg-dGray200 outline-purple-600"
-          defaultValue={lesson?.tags.join(", ") || ""}
-          name="tags"
-        />
-      </div>
-      <button className="btn w-full max-w-sm bg-premary text-white py-2 rounded-lg">
-        {lesson ? "تعديل" : "أنشاء"}
-      </button>
-    </form>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {renderStep()}
+
+        <div className="flex justify-between mt-6">
+          {step > 1 && (
+            <button
+              type="button"
+              onClick={handleBack}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              رجوع
+            </button>
+          )}
+          {step < 3 ? (
+            <button
+              type="button"
+              onClick={handleNext}
+              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors ml-auto"
+            >
+              التالي
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors ml-auto"
+            >
+              {lesson ? "تعديل" : "انشاء"} Lesson
+            </button>
+          )}
+        </div>
+      </form>
+    </div>
   );
 };
 
-// import React, { useState } from "react";
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-// // import { Button } from '@/components/ui/button';
-// // import { Input } from '@/components/ui/input';
-// // import { Textarea } from '@/components/ui/textarea';
-// // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-// import {
-//   ChevronRight,
-//   ChevronLeft,
-//   Upload,
-//   FileText,
-//   BookOpen,
-//   Tag,
-// } from "lucide-react";
-// import { ILesson } from "@/utils/types";
-
-// const LessonForm = ({ lesson }: { lesson?: ILesson }) => {
-//   const [step, setStep] = useState(1);
-//   const [formData, setFormData] = useState({
-//     file: null,
-//     title: lesson?.title || "",
-//     description: lesson?.description || "",
-//     grade: lesson?.grade || "7eme",
-//     subject: lesson?.subject || "math",
-//     tags: lesson?.tags?.join(", ") || "",
-//   });
-//   const [error, setError] = useState("");
-//   const [fileName, setFileName] = useState("");
-
-//   const handleFileChange = (e: any) => {
-//     const file = e.target.files[0];
-//     if (file) {
-//       if (file.type !== "application/pdf") {
-//         setError("Please upload a PDF file");
-//         return;
-//       }
-//       setFormData({ ...formData, file });
-//       setFileName(file.name);
-//       setError("");
-//     }
-//   };
-
-//   const handleNext = () => {
-//     if (step === 1 && !formData.file) {
-//       setError("Please upload a file first");
-//       return;
-//     }
-//     if (step === 2 && (!formData.title || !formData.description)) {
-//       setError("Please fill in all required fields");
-//       return;
-//     }
-//     setError("");
-//     setStep(step + 1);
-//   };
-
-//   const handleBack = () => setStep(step - 1);
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     if (!formData.tags) {
-//       setError("Please add at least one tag");
-//       return;
-//     }
-//     // Transform tags string to array
-//     const formDataToSubmit = {
-//       ...formData,
-//       tags: formData.tags.split(",").map((tag) => tag.trim()),
-//     };
-//     try {
-//       await onSubmit(formDataToSubmit);
-//     } catch (err) {
-//       setError(err.message);
-//     }
-//   };
-
-//   const renderStep = () => {
-//     switch (step) {
-//       case 1:
-//         return (
-//           <div className="space-y-4">
-//             <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-purple-500 transition-colors">
-//               <Upload className="w-12 h-12 text-gray-400 mb-4" />
-//               <p className="text-sm text-gray-600 mb-2">Upload your PDF file</p>
-//               <input
-//                 type="file"
-//                 accept=".pdf"
-//                 onChange={handleFileChange}
-//                 className="hidden"
-//                 id="file-upload"
-//               />
-//               <label
-//                 htmlFor="file-upload"
-//                 className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg cursor-pointer hover:bg-purple-700 transition-colors"
-//               >
-//                 Choose File
-//               </label>
-//               {fileName && (
-//                 <p className="mt-2 text-sm text-gray-600">{fileName}</p>
-//               )}
-//             </div>
-//           </div>
-//         );
-//       case 2:
-//         return (
-//           <div className="space-y-4">
-//             <div>
-//               <label className="block text-sm font-medium mb-1">Title</label>
-//               <Input
-//                 value={formData.title}
-//                 onChange={(e) =>
-//                   setFormData({ ...formData, title: e.target.value })
-//                 }
-//                 placeholder="Enter lesson title"
-//               />
-//             </div>
-//             <div>
-//               <label className="block text-sm font-medium mb-1">
-//                 Description
-//               </label>
-//               <Textarea
-//                 value={formData.description}
-//                 onChange={(e) =>
-//                   setFormData({ ...formData, description: e.target.value })
-//                 }
-//                 placeholder="Enter lesson description"
-//                 className="min-h-[100px]"
-//               />
-//             </div>
-//           </div>
-//         );
-//       case 3:
-//         return (
-//           <div className="space-y-4">
-//             <div>
-//               <label className="block text-sm font-medium mb-1">
-//                 Grade Level
-//               </label>
-//               <select
-//                 value={formData.grade}
-//                 onChange={(value) =>
-//                   setFormData({ ...formData, grade: value })
-//                 }
-//               >
-//                 <SelectTrigger>
-//                   <SelectValue placeholder="Select grade" />
-//                 </SelectTrigger>
-//                 <SelectContent>
-//                   <SelectItem value="7eme">7eme</SelectItem>
-//                   <SelectItem value="8eme">8eme</SelectItem>
-//                   <SelectItem value="9eme">9eme</SelectItem>
-//                   <SelectItem value="tcs">TCS</SelectItem>
-//                   <SelectItem value="tcl">TCL</SelectItem>
-//                 </SelectContent>
-//               </Select>
-//             </div>
-//             <div>
-//               <label className="block text-sm font-medium mb-1">Subject</label>
-//               <Select
-//                 value={formData.subject}
-//                 onValueChange={(value) =>
-//                   setFormData({ ...formData, subject: value })
-//                 }
-//               >
-//                 <SelectTrigger>
-//                   <SelectValue placeholder="Select subject" />
-//                 </SelectTrigger>
-//                 <SelectContent>
-//                   <SelectItem value="math">Mathematics</SelectItem>
-//                   <SelectItem value="phisic">Physics</SelectItem>
-//                   <SelectItem value="arabic">Arabic</SelectItem>
-//                 </SelectContent>
-//               </Select>
-//             </div>
-//             <div>
-//               <label className="block text-sm font-medium mb-1">
-//                 Tags (comma-separated)
-//               </label>
-//               <Input
-//                 value={formData.tags}
-//                 onChange={(e) =>
-//                   setFormData({ ...formData, tags: e.target.value })
-//                 }
-//                 placeholder="e.g., algebra, equations, basics"
-//               />
-//             </div>
-//           </div>
-//         );
-//     }
-//   };
-
-//   const steps = [
-//     { icon: <Upload className="w-4 h-4" />, label: "Upload" },
-//     { icon: <FileText className="w-4 h-4" />, label: "Details" },
-//     { icon: <Tag className="w-4 h-4" />, label: "Metadata" },
-//   ];
-
-//   return (
-//     <Card className="w-full max-w-md mx-auto">
-//       <CardHeader>
-//         <CardTitle className="text-center">
-//           {lesson ? "Edit Lesson" : "Create New Lesson"}
-//         </CardTitle>
-//         <div className="flex justify-between items-center mt-4">
-//           {steps.map((s, i) => (
-//             <div
-//               key={i}
-//               className={`flex items-center ${
-//                 i < step ? "text-purple-600" : "text-gray-400"
-//               }`}
-//             >
-//               <div
-//                 className={`flex items-center justify-center w-8 h-8 rounded-full ${
-//                   i + 1 === step
-//                     ? "bg-purple-100 text-purple-600"
-//                     : i + 1 < step
-//                     ? "bg-purple-600 text-white"
-//                     : "bg-gray-100"
-//                 }`}
-//               >
-//                 {s.icon}
-//               </div>
-//               <span className="text-xs ml-1">{s.label}</span>
-//               {i < steps.length - 1 && (
-//                 <div
-//                   className={`h-0.5 w-12 mx-2 ${
-//                     i + 1 < step ? "bg-purple-600" : "bg-gray-200"
-//                   }`}
-//                 />
-//               )}
-//             </div>
-//           ))}
-//         </div>
-//       </CardHeader>
-//       <CardContent>
-//         {error && (
-//           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-//             {error}
-//           </div>
-//         )}
-//         <form onSubmit={handleSubmit} className="space-y-6">
-//           {renderStep()}
-//           <div className="flex justify-between mt-6">
-//             {step > 1 && (
-//               <Button
-//                 type="button"
-//                 variant="outline"
-//                 onClick={handleBack}
-//                 className="flex items-center"
-//               >
-//                 <ChevronLeft className="w-4 h-4 mr-1" />
-//                 Back
-//               </Button>
-//             )}
-//             {step < 3 ? (
-//               <Button
-//                 type="button"
-//                 onClick={handleNext}
-//                 className="flex items-center ml-auto"
-//               >
-//                 Next
-//                 <ChevronRight className="w-4 h-4 ml-1" />
-//               </Button>
-//             ) : (
-//               <Button type="submit" className="flex items-center ml-auto">
-//                 {lesson ? "Update" : "Create"} Lesson
-//               </Button>
-//             )}
-//           </div>
-//         </form>
-//       </CardContent>
-//     </Card>
-//   );
-// };
-
-// export default LessonForm;
+export { LessonForm };
